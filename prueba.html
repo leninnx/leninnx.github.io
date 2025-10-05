@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Ingesta de Datos - Comparación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Oxanium:wght@200..800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Oxanium", sans-serif;
+            background: linear-gradient(to right, #ffffff, #0000FF);
+            background-image: radial-gradient(#69696957 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: -25px -25px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: #ffffff;
+            color: #0000FF;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section img {
+            height: 60px;
+            width: auto;
+        }
+
+        .logo-text {
+            border-left: 2px solid #0000FF;
+            padding-left: 15px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: #0000FF;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: #0000FF;
+            color: white;
+            padding: 30px 0;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-content p {
+            margin: 5px 0;
+            font-size: 0.95em;
+        }
+
+        .footer-content strong {
+            font-size: 1.1em;
+        }
+
+        .container {
+            max-width: 2400px;
+            margin: 0;
+            padding: 20px;
+            flex: 1;
+        }
+
+        h1 {
+            color: #0000FF;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #0000FF;
+        }
+
+        .sources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .source-card {
+            background: #0000FF;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+        }
+
+        .source-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #0000FF;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0000CC;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 255, 0.3);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Comparación */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .comparison-card {
+            background: #0000FF;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+        }
+
+        .comparison-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+        }
+
+        .metric-row {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* Tabla de datos */
+        .data-table {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #0000FF;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .source-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-websocket {
+            background: #0000FF;
+            color: white;
+        }
+
+        .badge-graphql {
+            background: #0000FF;
+            color: white;
+        }
+
+        .badge-batch {
+            background: #0000FF;
+            color: white;
+        }
+
+        .metric-cell {
+            font-weight: 600;
+            color: #7f8c8d;
+        }
+
+        .file-input {
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0000FF;
+        }
+
+        .info-box h4 {
+            color: #0000FF;
+            margin-bottom: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .eliminar {
+            width: auto;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px auto;
+            background: #FF0000;
+            color: white;
+            display: block;
+        }
+
+        .eliminar:hover {
+            background: #CC0000;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .bench {
+            width: auto;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px auto;
+            background: #0000FF;
+            color: white;
+            display: block;
+        }
+
+        .bench:hover {
+            background: #0000CC;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 255, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="/static/unnamed.png" alt="Logo Sistema">
+                <span class="logo-text">Escuela de Posgrado <br> Maestría en Informática</span>
+            </div>
+            <nav>
+                <a href="#ingesta">Ingesta</a>
+                <a href="#comparacion">Comparación</a>
+                <a href="#benchmark">Benchmark</a>
+                <a href="#datos">Datos</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Sistema de Ingesta de Datos</h1>
+
+        <!-- Panel de Ingesta -->
+        <div class="panel" id="ingesta">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">Fuentes de Datos</h2>
+
+            <div class="info-box">
+                <h4>ℹ️ Información del Sistema</h4>
+                <p>Este sistema compara el rendimiento (tiempo de respuesta y memoria) de tres métodos de ingesta:</p>
+                <p>• <strong>API WebSocket (REST):</strong> Ingesta en tiempo real mediante API REST</p>
+                <p>• <strong>API GraphQL:</strong> Ingesta en tiempo real mediante consultas GraphQL</p>
+                <p>• <strong>Batch Load:</strong> Carga por lotes desde archivos CSV/Excel</p>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <div class="sources">
+                <!-- API WebSocket (REST) -->
+                <div class="source-card">
+                    <h3>🌐 API WebSocket (REST)</h3>
+                    <p style="margin-bottom: 15px; font-size: 0.9em;">Pokemon API</p>
+
+                    <div class="form-group">
+                        <label>Nombre del Pokémon:</label>
+                        <input type="text" id="pokemon-name" placeholder="pikachu, charizard, bulbasaur..."
+                            value="pikachu">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cantidad de registros:</label>
+                        <input type="number" id="pokemon-cantidad" min="1" max="50" value="1">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="ingestWebSocket()">
+                        Ingestar Datos
+                    </button>
+                    <div class="loading" id="loading-ws">Cargando...</div>
+                </div>
+
+                <!-- API GraphQL -->
+                <div class="source-card">
+                    <h3>📊 API GraphQL</h3>
+                    <p style="margin-bottom: 15px; font-size: 0.9em;">Countries API</p>
+
+                    <div class="form-group">
+                        <label>Código del País:</label>
+                        <select id="country-code">
+                            <option value="PE">Perú (PE)</option>
+                            <option value="US">Estados Unidos (US)</option>
+                            <option value="AR">Argentina (AR)</option>
+                            <option value="BR">Brasil (BR)</option>
+                            <option value="CL">Chile (CL)</option>
+                            <option value="CO">Colombia (CO)</option>
+                            <option value="MX">México (MX)</option>
+                            <option value="ES">España (ES)</option>
+                            <option value="FR">Francia (FR)</option>
+                            <option value="JP">Japón (JP)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cantidad de registros:</label>
+                        <input type="number" id="country-cantidad" min="1" max="20" value="1">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="ingestGraphQL()">
+                        Ingestar Datos
+                    </button>
+                    <div class="loading" id="loading-gql">Cargando...</div>
+                </div>
+
+                <!-- Batch Load -->
+                <div class="source-card">
+                    <h3>📁 Batch Load (CSV/XLS)</h3>
+                    <p style="margin-bottom: 15px; font-size: 0.9em;">Carga por Lotes</p>
+
+                    <div class="form-group">
+                        <label>Seleccionar Archivo:</label>
+                        <input type="file" id="batch-file" accept=".csv,.xls,.xlsx" class="file-input">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="ingestBatch()">
+                        Ingestar Archivo
+                    </button>
+                    <div class="loading" id="loading-batch">Cargando...</div>
+                </div>
+            </div>
+
+            <button class="eliminar" onclick="clearData()">
+                🗑️ Limpiar Todos los Datos
+            </button>
+        </div>
+
+        <!-- Panel de Comparación -->
+        <div class="panel" id="comparacion">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">📈 Comparación de Rendimiento</h2>
+            <div class="comparison-grid" id="comparison-container">
+                <div class="empty-state">
+                    <p>No hay datos para comparar aún. Ingesta datos desde las fuentes para ver la comparación.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Apache Benchmark -->
+        <div class="panel" id="benchmark">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">⚡ Apache Benchmark</h2>
+
+            <div class="info-box">
+                <h4>ℹ️ Apache Benchmark (ab)</h4>
+                <p>Herramienta para medir el rendimiento de servidores HTTP mediante pruebas de carga concurrente.</p>
+                <p><strong>Nota:</strong> Requiere tener instalado Apache Benchmark (ab) en el sistema.</p>
+            </div>
+
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px solid #0000FF;">
+                    <h3 style="color: #0000FF; margin-bottom: 15px;">Configuración del Benchmark</h3>
+
+                    <div class="form-group">
+                        <label style="color: #2c3e50;">API a Probar:</label>
+                        <select id="benchmark-api"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="websocket">API WebSocket (REST)</option>
+                            <option value="graphql">API GraphQL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color: #2c3e50;">Total de Requests:</label>
+                        <input type="number" id="benchmark-requests" min="10" max="10000" value="100"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color: #2c3e50;">Concurrencia:</label>
+                        <input type="number" id="benchmark-concurrency" min="1" max="100" value="10"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+
+                    <button class="bench" onclick="runBenchmark()">
+                        🚀 Ejecutar Benchmark
+                    </button>
+                    <div class="loading" id="loading-benchmark">Ejecutando benchmark...</div>
+                </div>
+
+                <div id="benchmark-results-summary"
+                    style="background: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px solid #0000FF;">
+                    <h3 style="color: #0000FF; margin-bottom: 15px;">Último Resultado</h3>
+                    <div class="empty-state" style="padding: 20px;">
+                        <p>No se ha ejecutado ningún benchmark aún</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: white; border: 2px solid #0000FF; border-radius: 10px; padding: 20px;">
+                <h3 style="color: #0000FF; margin-bottom: 15px;">📊 Historial de Benchmarks</h3>
+                <div id="benchmark-history">
+                    <div class="empty-state">
+                        <p>No hay historial de benchmarks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Datos -->
+        <div class="panel" id="datos">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">📋 Registro de Ingestas</h2>
+            <div class="data-table" id="data-container">
+                <div class="empty-state">
+                    <p>No hay datos registrados aún</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p><strong>Inteligencia de Negocios y Analítica de Datos</strong></p>
+            <p><strong>Universidad Nacional del Altiplano Puno</strong></p>
+            <p>Escuela de Posgrado - Maestría en Informática</p>
+            <p>© 2025 - Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+
+    <script>
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            alertContainer.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            setTimeout(() => alertContainer.innerHTML = '', 5000);
+        }
+
+        function showLoading(id, show) {
+            document.getElementById(id).style.display = show ? 'block' : 'none';
+        }
+
+        async function ingestWebSocket() {
+            const pokemon = document.getElementById('pokemon-name').value;
+            const cantidad = parseInt(document.getElementById('pokemon-cantidad').value);
+            showLoading('loading-ws', true);
+
+            try {
+                const response = await fetch('/api/ingest/websocket', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pokemon, cantidad })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const mensaje = cantidad === 1
+                        ? `✅ Datos de ${result.data[0].name} ingresados correctamente`
+                        : `✅ ${result.cantidad} registros ingresados - Tiempo total: ${result.tiempo_total_ms}ms - Promedio: ${result.tiempo_promedio_ms}ms`;
+                    showAlert(mensaje, 'success');
+                    refreshData();
+                } else {
+                    showAlert(`❌ Error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            } finally {
+                showLoading('loading-ws', false);
+            }
+        }
+
+        async function ingestGraphQL() {
+            const country = document.getElementById('country-code').value;
+            const cantidad = parseInt(document.getElementById('country-cantidad').value);
+            showLoading('loading-gql', true);
+
+            try {
+                const response = await fetch('/api/ingest/graphql', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ country, cantidad })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const mensaje = cantidad === 1
+                        ? `✅ Datos de ${result.data[0].name} ingresados correctamente`
+                        : `✅ ${result.cantidad} registros ingresados - Tiempo total: ${result.tiempo_total_ms}ms - Promedio: ${result.tiempo_promedio_ms}ms`;
+                    showAlert(mensaje, 'success');
+                    refreshData();
+                } else {
+                    showAlert(`❌ Error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            } finally {
+                showLoading('loading-gql', false);
+            }
+        }
+
+        async function ingestBatch() {
+            const fileInput = document.getElementById('batch-file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showAlert('❌ Por favor selecciona un archivo', 'error');
+                return;
+            }
+
+            showLoading('loading-batch', true);
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/ingest/batch', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(`✅ Archivo ${result.data.filename} (${result.data.rows} filas) ingresado correctamente`, 'success');
+                    refreshData();
+                    fileInput.value = '';
+                } else {
+                    showAlert(`❌ Error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            } finally {
+                showLoading('loading-batch', false);
+            }
+        }
+
+        async function refreshData() {
+            await Promise.all([
+                refreshComparison(),
+                refreshDataTable()
+            ]);
+        }
+
+        async function refreshComparison() {
+            try {
+                const response = await fetch('/api/comparacion');
+                const result = await response.json();
+
+                const container = document.getElementById('comparison-container');
+
+                if (!result.comparacion || Object.keys(result.comparacion).length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No hay datos para comparar aún</p></div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                for (const [source, metrics] of Object.entries(result.comparacion)) {
+                    const cardClass = source === 'API WebSocket' ? 'websocket' :
+                        source === 'API GraphQL' ? 'graphql' : 'batch';
+
+                    const card = document.createElement('div');
+                    card.className = `comparison-card ${cardClass}`;
+                    card.innerHTML = `
+                        <h3>${source}</h3>
+                        <div class="metric-row">
+                            <div class="metric-label">Registros Ingresados</div>
+                            <div class="metric-value">${metrics.cantidad}</div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-label">Tiempo Promedio</div>
+                            <div class="metric-value">${metrics.tiempo_promedio} ms</div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-label">Memoria Promedio</div>
+                            <div class="metric-value">${metrics.memoria_promedio} KB</div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                }
+
+            } catch (error) {
+                console.error('Error al actualizar comparación:', error);
+            }
+        }
+
+        async function refreshDataTable() {
+            try {
+                const response = await fetch('/api/datos');
+                const result = await response.json();
+
+                const container = document.getElementById('data-container');
+
+                if (!result.data || result.data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No hay datos registrados aún</p></div>';
+                    return;
+                }
+
+                const badgeClass = {
+                    'API WebSocket': 'badge-websocket',
+                    'API GraphQL': 'badge-graphql',
+                    'Batch Load CSV/XLS': 'badge-batch'
+                };
+
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fuente</th>
+                                <th>Tipo</th>
+                                <th>Datos</th>
+                                <th>Tiempo (ms)</th>
+                                <th>Memoria (KB)</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${result.data.map(item => `
+                                <tr>
+                                    <td>
+                                        <span class="source-badge ${badgeClass[item.source]}">
+                                            ${item.source}
+                                        </span>
+                                    </td>
+                                    <td>${item.tipo_ingesta}</td>
+                                    <td>${formatItemData(item)}</td>
+                                    <td class="metric-cell">${item.metrics.tiempo_respuesta_ms}</td>
+                                    <td class="metric-cell">${item.metrics.memoria_kb}</td>
+                                    <td>${item.timestamp}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+            } catch (error) {
+                console.error('Error al actualizar tabla:', error);
+            }
+        }
+
+        function formatItemData(item) {
+            if (item.source === 'API WebSocket') {
+                return `${item.name} (#${item.id})`;
+            } else if (item.source === 'API GraphQL') {
+                return `${item.name} (${item.code})`;
+            } else {
+                return `${item.filename} (${item.rows} filas)`;
+            }
+        }
+
+        async function clearData() {
+            if (!confirm('¿Estás seguro de que quieres limpiar todos los datos?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/datos/clear', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('✅ Todos los datos han sido limpiados', 'success');
+                    refreshData();
+                    refreshBenchmarkHistory();
+                }
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function runBenchmark() {
+            const api = document.getElementById('benchmark-api').value;
+            const requests = parseInt(document.getElementById('benchmark-requests').value);
+            const concurrency = parseInt(document.getElementById('benchmark-concurrency').value);
+
+            showLoading('loading-benchmark', true);
+
+            try {
+                const response = await fetch('/api/benchmark', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        api_type: api,
+                        requests: requests,
+                        concurrency: concurrency
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(`✅ Benchmark completado exitosamente`, 'success');
+                    displayBenchmarkResult(result.data);
+                    refreshBenchmarkHistory();
+                } else {
+                    showAlert(`❌ ${result.error}${result.message ? '\n' + result.message : ''}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            } finally {
+                showLoading('loading-benchmark', false);
+            }
+        }
+
+        function displayBenchmarkResult(data) {
+            const container = document.getElementById('benchmark-results-summary');
+
+            container.innerHTML = `
+                <h3 style="color: #0000FF; margin-bottom: 15px;">Último Resultado</h3>
+                <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                    <strong style="color: #0000FF;">API:</strong> ${data.api_type}
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                    <strong style="color: #0000FF;">Requests Totales:</strong> ${data.requests_total}
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                    <strong style="color: #0000FF;">Requests Fallidos:</strong> ${data.requests_failed}
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                    <strong style="color: #0000FF;">Requests/segundo:</strong> ${data.requests_per_second.toFixed(2)}
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                    <strong style="color: #0000FF;">Tiempo/request:</strong> ${data.time_per_request.toFixed(2)} ms
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                    <strong style="color: #0000FF;">Transfer rate:</strong> ${data.transfer_rate.toFixed(2)} KB/s
+                </div>
+            `;
+        }
+
+        async function refreshBenchmarkHistory() {
+            try {
+                const response = await fetch('/api/benchmark/results');
+                const result = await response.json();
+
+                const container = document.getElementById('benchmark-history');
+
+                if (!result.data || result.data.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No hay historial de benchmarks</p></div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>API</th>
+                                <th>Requests</th>
+                                <th>Fallidos</th>
+                                <th>Req/seg</th>
+                                <th>Tiempo/req (ms)</th>
+                                <th>Transfer (KB/s)</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${result.data.map(item => `
+                                <tr>
+                                    <td><span class="source-badge badge-websocket">${item.api_type}</span></td>
+                                    <td>${item.requests_total}</td>
+                                    <td class="metric-cell">${item.requests_failed}</td>
+                                    <td class="metric-cell">${item.requests_per_second.toFixed(2)}</td>
+                                    <td class="metric-cell">${item.time_per_request.toFixed(2)}</td>
+                                    <td class="metric-cell">${item.transfer_rate.toFixed(2)}</td>
+                                    <td>${item.timestamp}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+            } catch (error) {
+                console.error('Error al actualizar historial de benchmark:', error);
+            }
+        }
+
+        // Cargar datos al iniciar
+        window.onload = function () {
+            refreshData();
+            refreshBenchmarkHistory();
+        };
+    </script>
+</body>
+
+</html>
